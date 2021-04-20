@@ -2,16 +2,27 @@ package org.ensas.securityBrains.security;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.ensas.securityBrains.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class MyUserDetails implements UserDetails {
 
-	private String userName;
-	public MyUserDetails(String username) {
-		this.userName = username;
+	private String username;
+	private List<GrantedAuthority> roles;
+	private String password;
+	private boolean active;
+	public MyUserDetails(User user) {
+	this.username = user.getUsername();
+	this.password = user.getPassword();
+	this.active = user.isActive();
+	this.roles = Arrays.stream(user.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+	
+	
 	}
 	public MyUserDetails() {
 
@@ -19,19 +30,19 @@ public class MyUserDetails implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+		return this.roles;
 	}
 
 	@Override
 	public String getPassword() {
 		// TODO Auto-generated method stub
-		return "pass";
+		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
 		// TODO Auto-generated method stub
-		return this.userName;
+		return this.username;
 	}
 
 	@Override
