@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,15 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	DataSource dataSource;
+	UserDetailsService userDetailsService;
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService);
 		
-		//auth.inMemoryAuthentication().withUser("blah").password("blah").roles("USER")
-		//.and().withUser("foo").password("foo").roles("ADMIN");
-		auth.jdbcAuthentication().dataSource(dataSource).withDefaultSchema()
-		.withUser(User.withUsername("user").password("user").roles("USER"))
-		.withUser(User.withUsername("admin").password("admin").roles("ADMIN"));
+		
+		
 	}
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
